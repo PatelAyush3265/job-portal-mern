@@ -90,6 +90,6 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## Contact
 
-Abhishek Rajput - [GitHub](https://github.com/PatelAyush3265)
+Patel Ayush - [GitHub](https://github.com/PatelAyush3265)
 
 Project Link: [https://github.com/exclusiveabhi/react-job-portal.git](https://github.com/PatelAyush3265/job-portal-mern/tree/master?tab=readme-ov-file)
