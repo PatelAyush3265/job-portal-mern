@@ -12,7 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
 
-  const { isAuthorized, setIsAuthorized } = useContext(Context);
+  const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -31,14 +31,16 @@ const Login = () => {
       setEmail("");
       setPassword("");
       setRole("");
+      setUser(data.user); // Store user data in Context
       setIsAuthorized(true);
     } catch (error) {
       toast.error(error.response.data.message);
+      setIsAuthorized(false);
     }
   };
 
-  if(isAuthorized){
-    return <Navigate to={'/'}/>
+  if (isAuthorized) {
+    return <Navigate to={'/'} />;
   }
 
   return (
@@ -55,7 +57,6 @@ const Login = () => {
               <div>
                 <select value={role} onChange={(e) => setRole(e.target.value)}>
                   <option value="">Select Role</option>
-                  
                   <option value="Job Seeker">Job Seeker</option>
                   <option value="Employer">Employer</option>
                 </select>

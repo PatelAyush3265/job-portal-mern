@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   MdOutlineDesignServices,
   MdOutlineWebhook,
@@ -9,6 +9,9 @@ import { TbAppsFilled } from "react-icons/tb";
 import { FaReact } from "react-icons/fa";
 import { GiArtificialIntelligence } from "react-icons/gi";
 import { IoGameController } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Context } from "../../main";
 
 const PopularCategories = () => {
   const categories = [
@@ -61,13 +64,45 @@ const PopularCategories = () => {
       icon: <IoGameController />,
     },
   ];
+
+  const { user, isAuthorized } = useContext(Context);
+  const [jobs, setJobs] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch all jobs on mount
+    axios
+      .get("http://localhost:4000/api/v1/job/getall", { withCredentials: true })
+      .then((res) => {
+        setJobs(res.data.jobs || []);
+      })
+      .catch(() => setJobs([]));
+  }, []);
+
+  const handleCategoryClick = (categoryTitle) => {
+    // Only job seekers can apply
+    if (!isAuthorized || !user || user.role !== "Job Seeker") return;
+    // Check if there is at least one job posted by an employer in this category
+    const hasJob = jobs.some(
+      (job) => job.category === categoryTitle && job.postedBy && job.postedBy.role === "Employer"
+    );
+    if (!hasJob) return;
+    // Redirect to application form, pre-filling the job name
+    navigate(`/application-form?job=${encodeURIComponent(categoryTitle)}`);
+  };
+
   return (
     <div className="categories">
       <h3>POPULAR CATEGORIES</h3>
       <div className="banner">
         {categories.map((element) => {
           return (
-            <div className="card" key={element.id}>
+            <div
+              className="card"
+              key={element.id}
+              style={{ cursor: "pointer" }}
+              onClick={() => handleCategoryClick(element.title)}
+            >
               <div className="icon">{element.icon}</div>
               <div className="text">
                 <p>{element.title}</p>

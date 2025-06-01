@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Context } from "../../main";
 
 const Application = () => {
@@ -17,6 +17,7 @@ const Application = () => {
   const { isAuthorized, user } = useContext(Context);
   const navigateTo = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
 
   // Redirect non-applicants
   useEffect(() => {
@@ -24,6 +25,15 @@ const Application = () => {
       navigateTo("/");
     }
   }, [isAuthorized, user, navigateTo]);
+
+  // Pre-fill job name from query param if present
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const jobName = params.get("job");
+    if (jobName) {
+      setCoverLetter((prev) => prev || `Applying for: ${jobName}`);
+    }
+  }, [location.search]);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
